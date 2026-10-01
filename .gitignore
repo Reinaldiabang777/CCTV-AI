@@ -1,0 +1,36 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+*.class
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Runtime data
+customer_history.json
+
+# YOLO models
+*.pt
+*.onnx
+
+# CCTV recordings / test media
+*.mp4
+*.avi
+*.mkv
+*.mov
+
+# Project backups
+*.before_*
+*.ui-backup
+tracker_backup_*.py
+
+# Local configuration
+.env
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
