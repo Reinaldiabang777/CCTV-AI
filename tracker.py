@@ -1,4 +1,4 @@
-﻿from ultralytics import YOLO
+from ultralytics import YOLO
 import cv2
 import json
 import numpy as np
@@ -14,14 +14,14 @@ from counter import CustomerCounter
 # CONFIGURATION
 # =========================
 
-MODEL = "yolo11n.pt"
+MODEL = "yolo11s.pt"
 RTSP_URL = "rtsp://127.0.0.1:8954/cam6"
 ZONE_FILE = "zones.json"
 
 # Target maksimal inference.
 # Bukan berarti kamera dibatasi.
-INFERENCE_INTERVAL = 0.0
-IMG_SIZE = 416
+INFERENCE_INTERVAL = 0.05
+IMG_SIZE = 384
 DEVICE = "cpu"
 
 
@@ -641,6 +641,8 @@ print("========================================")
 print(" CUSTOMER COUNTING SELESAI")
 print(" TOTAL HARI INI:", counter.get_total())
 print("========================================")
+
+
 
 
 
