@@ -4,7 +4,19 @@ import os
 import numpy as np
 
 WINDOW_NAME = "CCTV Counting - Set Customer Zone"
-ZONE_FILE = "zones.json"
+
+CAMERAS = {
+    "1": {"name": "CAM1", "rtsp": "rtsp://127.0.0.1:8954/cam1", "zone": "zones/cam1.json"},
+    "2": {"name": "CAM2", "rtsp": "rtsp://127.0.0.1:8954/cam2", "zone": "zones/cam2.json"},
+    "3": {"name": "CAM3", "rtsp": "rtsp://127.0.0.1:8954/cam3", "zone": "zones/cam3.json"},
+    "4": {"name": "CAM4", "rtsp": "rtsp://127.0.0.1:8954/cam4", "zone": "zones/cam4.json"},
+    "5": {"name": "CAM5", "rtsp": "rtsp://127.0.0.1:8954/cam5", "zone": "zones/cam5.json"},
+    "6": {"name": "CAM6", "rtsp": "rtsp://127.0.0.1:8954/cam6", "zone": "zones/cam6.json"},
+    "7": {"name": "CAM7", "rtsp": "rtsp://127.0.0.1:8954/cam7", "zone": "zones/cam7.json"},
+    "8": {"name": "CAM8", "rtsp": "rtsp://127.0.0.1:8954/cam8", "zone": "zones/cam8.json"}
+}
+
+ZONE_FILE = None
 
 saved_points = []
 draft_points = []
@@ -118,7 +130,33 @@ def draw_zone(frame, points, label):
 def main():
     global saved_points, draft_points
 
-    RTSP_URL = "rtsp://127.0.0.1:8954/cam6"
+    global ZONE_FILE
+
+    print("")
+    print("==============================")
+    print("       PILIH KAMERA")
+    print("==============================")
+
+    for key, camera in CAMERAS.items():
+        print(f"{key}. {camera['name']}")
+
+    print("==============================")
+
+    camera_choice = input("Pilih kamera [1-8]: ").strip()
+
+    if camera_choice not in CAMERAS:
+        print("ERROR: Pilihan kamera tidak valid.")
+        return
+
+    camera = CAMERAS[camera_choice]
+
+    CAMERA_NAME = camera["name"]
+    RTSP_URL = camera["rtsp"]
+    ZONE_FILE = camera["zone"]
+
+    print(f"CAMERA : {CAMERA_NAME}")
+    print(f"RTSP   : {RTSP_URL}")
+    print(f"ZONE   : {ZONE_FILE}")
 
     cap = cv2.VideoCapture(
         RTSP_URL,
@@ -139,7 +177,7 @@ def main():
         print(saved_points)
 
     print("")
-    print("===== SET CUSTOMER ZONE CAM 6 =====")
+    print(f"===== SET CUSTOMER ZONE {CAMERA_NAME} =====")
     print("Klik kiri : tambah titik")
     print("R         : reset draft")
     print("ENTER     : SET")
@@ -220,3 +258,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+

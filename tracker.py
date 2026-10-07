@@ -1,11 +1,10 @@
-from ultralytics import YOLO
+﻿from ultralytics import YOLO
 import cv2
 import json
 import numpy as np
 import time
 import threading
-
-
+import os
 from customer_session import CustomerSession
 from counter import CustomerCounter
 
@@ -15,8 +14,74 @@ from counter import CustomerCounter
 # =========================
 
 MODEL = "yolo11s.pt"
-RTSP_URL = "rtsp://127.0.0.1:8954/cam6"
-ZONE_FILE = "zones.json"
+
+CAMERAS = {
+    "1": {
+        "name": "CAM1",
+        "rtsp": "rtsp://127.0.0.1:8954/cam1",
+        "zone": "zones/cam1.json"
+    },
+    "2": {
+        "name": "CAM2",
+        "rtsp": "rtsp://127.0.0.1:8954/cam2",
+        "zone": "zones/cam2.json"
+    },
+    "3": {
+        "name": "CAM3",
+        "rtsp": "rtsp://127.0.0.1:8954/cam3",
+        "zone": "zones/cam3.json"
+    },
+    "4": {
+        "name": "CAM4",
+        "rtsp": "rtsp://127.0.0.1:8954/cam4",
+        "zone": "zones/cam4.json"
+    },
+    "5": {
+        "name": "CAM5",
+        "rtsp": "rtsp://127.0.0.1:8954/cam5",
+        "zone": "zones/cam5.json"
+    },
+    "6": {
+        "name": "CAM6",
+        "rtsp": "rtsp://127.0.0.1:8954/cam6",
+        "zone": "zones/cam6.json"
+    },
+    "7": {
+        "name": "CAM7",
+        "rtsp": "rtsp://127.0.0.1:8954/cam7",
+        "zone": "zones/cam7.json"
+    },
+    "8": {
+        "name": "CAM8",
+        "rtsp": "rtsp://127.0.0.1:8954/cam8",
+        "zone": "zones/cam8.json"
+    }
+}
+
+print("")
+print("==============================")
+print("       PILIH KAMERA")
+print("==============================")
+
+for key, camera in CAMERAS.items():
+    print(f"{key}. {camera['name']}")
+
+print("==============================")
+
+camera_choice = input("Pilih kamera [1-8]: ").strip()
+
+if camera_choice not in CAMERAS:
+    print("ERROR: Pilihan kamera tidak valid.")
+    raise SystemExit(1)
+
+CAMERA_CONFIG = CAMERAS[camera_choice]
+CAMERA_NAME = CAMERA_CONFIG["name"]
+RTSP_URL = CAMERA_CONFIG["rtsp"]
+ZONE_FILE = CAMERA_CONFIG["zone"]
+
+if not os.path.exists(ZONE_FILE):
+    print(f"ERROR: Zone untuk {CAMERA_NAME} belum tersedia: {ZONE_FILE}")
+    raise SystemExit(1)
 
 # Target maksimal inference.
 # Bukan berarti kamera dibatasi.
@@ -220,8 +285,8 @@ print("")
 print("========================================")
 print(" CCTV CUSTOMER COUNTING")
 print("========================================")
-print("CAMERA       : CAM6")
-print("MODEL        : YOLO11n")
+print(f"CAMERA       : {CAMERA_NAME}")
+print(f"MODEL        : {MODEL.replace(".pt", "").upper()}")
 print("ZONE         : CUSTOMER ZONE")
 print("QUALIFY      : 5 MENIT")
 print("GRACE TRACK  : 30 DETIK")
@@ -537,7 +602,7 @@ while True:
 
 
     # =========================
-    # BOTTOM STATUS PANEL
+    # BOTTOM STATUS
     # =========================
 
     total_text = (
@@ -547,23 +612,13 @@ while True:
 
     frame_height = annotated.shape[0]
 
-    panel_x1 = 10
-    panel_x2 = 335
-    panel_y2 = frame_height - 12
-    panel_y1 = max(frame_height - 82, 125)
-
-    cv2.rectangle(
-        annotated,
-        (panel_x1, panel_y1),
-        (panel_x2, panel_y2),
-        (0, 0, 0),
-        -1
-    )
+    status_y1 = max(frame_height - 55, 125)
+    status_y2 = frame_height - 25
 
     cv2.putText(
         annotated,
         total_text,
-        (20, panel_y1 + 30),
+        (20, status_y1),
         cv2.FONT_HERSHEY_SIMPLEX,
         0.72,
         (0, 255, 0),
@@ -575,7 +630,7 @@ while True:
         cv2.putText(
             annotated,
             "RTSP: CONNECTED",
-            (20, panel_y1 + 60),
+            (20, status_y2),
             cv2.FONT_HERSHEY_SIMPLEX,
             0.60,
             (0, 255, 0),
@@ -587,7 +642,7 @@ while True:
         cv2.putText(
             annotated,
             "RTSP: RECONNECTING",
-            (20, panel_y1 + 60),
+            (20, status_y2),
             cv2.FONT_HERSHEY_SIMPLEX,
             0.60,
             (0, 0, 255),
@@ -641,6 +696,11 @@ print("========================================")
 print(" CUSTOMER COUNTING SELESAI")
 print(" TOTAL HARI INI:", counter.get_total())
 print("========================================")
+
+
+
+
+
 
 
 
